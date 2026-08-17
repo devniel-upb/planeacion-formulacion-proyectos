@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Metodología de Formulación de Proyectos — Marco Lógico</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --bg2: #1e293b;
+    --card: #1e293b;
+    --accent: #38bdf8;
+    --accent2: #fb923c;
+    --accent3: #4ade80;
+    --accent4: #f472b6;
+    --accent5: #facc15;
+    --accent6: #a78bfa;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden;
+  }
+
+  /* ---------- SLIDES ---------- */
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 50px 8vw 100px;
+    opacity: 0;
+    transform: translateX(40px);
+    transition: opacity .45s ease, transform .45s ease;
+    overflow-y: auto;
+  }
+  .slide.active { display: flex; opacity: 1; transform: translateX(0); }
+  .slide-inner { max-width: 1150px; width: 100%; }
+
+  h1 { font-size: clamp(2rem, 4.5vw, 3.4rem); line-height: 1.15; }
+  h2 {
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    color: var(--accent);
+    margin-bottom: 22px;
+    border-left: 5px solid var(--accent);
+    padding-left: 16px;
+  }
+  h3 { font-size: 1.15rem; margin-bottom: 8px; }
+  p, li { font-size: clamp(.98rem, 1.55vw, 1.18rem); line-height: 1.55; }
+  ul { padding-left: 24px; }
+  li { margin-bottom: 8px; }
+  .muted { color: var(--muted); }
+  .accent { color: var(--accent); }
+  .accent2 { color: var(--accent2); }
+  .accent3 { color: var(--accent3); }
+  .accent4 { color: var(--accent4); }
+  .accent5 { color: var(--accent5); }
+  .accent6 { color: var(--accent6); }
+
+  /* ---------- PORTADA ---------- */
+  .cover {
+    text-align: center;
+    background:
+      radial-gradient(ellipse at 20% 30%, rgba(56,189,248,.15), transparent 50%),
+      radial-gradient(ellipse at 80% 70%, rgba(251,146,60,.12), transparent 50%);
+  }
+  .cover .tag {
+    display: inline-block;
+    padding: 6px 18px;
+    border: 1px solid var(--accent);
+    border-radius: 999px;
+    color: var(--accent);
+    font-size: .95rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 26px;
+  }
+  .cover .subtitle { margin-top: 20px; font-size: 1.25rem; color: var(--muted); }
+  .cover .hint { margin-top: 50px; font-size: .9rem; color: var(--muted); }
+  kbd {
+    background: var(--bg2); border: 1px solid #334155; border-radius: 6px;
+    padding: 2px 10px; font-family: inherit; font-size: .85rem;
+  }
+
+  /* ---------- DIVISORES DE PERSONA ---------- */
+  .divider { text-align: center; }
+  .divider .avatar { font-size: 3.4rem; margin-bottom: 10px; }
+  .divider .pnum {
+    display: inline-block; padding: 5px 20px; border-radius: 999px;
+    font-size: .9rem; letter-spacing: 2.5px; text-transform: uppercase; font-weight: 700;
+    margin-bottom: 20px;
+  }
+  .divider h1 { font-size: clamp(1.8rem, 3.8vw, 3rem); }
+  .divider .question {
+    margin: 30px auto 0; max-width: 700px; font-size: 1.3rem; font-style: italic;
+    padding: 20px 30px; border-radius: 14px;
+  }
+  .divider .obj { margin-top: 24px; color: var(--muted); font-size: 1.05rem; }
+
+  .p1 .pnum { background: rgba(56,189,248,.15); color: var(--accent); border: 1px solid var(--accent); }
+  .p1 h1 { color: var(--accent); } .p1 .question { background: rgba(56,189,248,.08); border: 1px solid rgba(56,189,248,.4); }
+  .p2 .pnum { background: rgba(251,146,60,.15); color: var(--accent2); border: 1px solid var(--accent2); }
+  .p2 h1 { color: var(--accent2); } .p2 .question { background: rgba(251,146,60,.08); border: 1px solid rgba(251,146,60,.4); }
+  .p3 .pnum { background: rgba(74,222,128,.15); color: var(--accent3); border: 1px solid var(--accent3); }
+  .p3 h1 { color: var(--accent3); } .p3 .question { background: rgba(74,222,128,.08); border: 1px solid rgba(74,222,128,.4); }
+  .p4 .pnum { background: rgba(244,114,182,.15); color: var(--accent4); border: 1px solid var(--accent4); }
+  .p4 h1 { color: var(--accent4); } .p4 .question { background: rgba(244,114,182,.08); border: 1px solid rgba(244,114,182,.4); }
+  .p5 .pnum { background: rgba(250,204,21,.15); color: var(--accent5); border: 1px solid var(--accent5); }
+  .p5 h1 { color: var(--accent5); } .p5 .question { background: rgba(250,204,21,.08); border: 1px solid rgba(250,204,21,.4); }
+  .p6 .pnum { background: rgba(167,139,250,.15); color: var(--accent6); border: 1px solid var(--accent6); }
+  .p6 h1 { color: var(--accent6); } .p6 .question { background: rgba(167,139,250,.08); border: 1px solid rgba(167,139,250,.4); }
+
+  /* ---------- ETIQUETA DE CASO ---------- */
+  .case-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 5px 16px; border-radius: 999px; font-size: .85rem; font-weight: 600;
+    background: rgba(167,139,250,.12); border: 1px solid rgba(167,139,250,.45);
+    color: var(--accent6); margin-bottom: 16px; letter-spacing: .5px;
+  }
+
+  /* ---------- CARDS / GRIDS ---------- */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 10px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 10px; }
+  .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 13px; margin-top: 10px; }
+  .grid6 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 10px; }
+  @media (max-width: 800px) { .grid2, .grid3, .grid4, .grid6 { grid-template-columns: 1fr; } }
+
+  .card {
+    background: var(--card);
+    border: 1px solid #334155;
+    border-radius: 14px;
+    padding: 20px;
+    transition: transform .2s, border-color .2s;
+  }
+  .card:hover { transform: translateY(-4px); border-color: var(--accent); }
+  .card .icon { font-size: 1.7rem; margin-bottom: 8px; }
+  .card p { font-size: .98rem; color: var(--muted); }
+  .card h3 { color: var(--text); }
+  .card ul { font-size: .95rem; }
+  .card li { color: var(--muted); margin-bottom: 6px; }
+
+  .num-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 40px; height: 40px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), #818cf8);
+    color: #0f172a; font-weight: 700; font-size: 1.1rem; margin-bottom: 10px;
+  }
+
+  /* ---------- ÁRBOLES ---------- */
+  .tree { display: flex; flex-direction: column; align-items: center; gap: 0; margin-top: 8px; }
+  .tree-level { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .tree-label {
+    font-size: .78rem; text-transform: uppercase; letter-spacing: 1.5px;
+    color: var(--muted); margin: 5px 0;
+  }
+  .node {
+    padding: 10px 16px; border-radius: 10px; font-size: .92rem; text-align: center;
+    border: 1px solid #334155; background: var(--bg2); max-width: 240px;
+  }
+  .node.central { background: linear-gradient(135deg, #b91c1c, #ef4444); color: #fff; font-weight: 700; border: none; font-size: 1rem; max-width: 420px; }
+  .node.central.green { background: linear-gradient(135deg, #15803d, #22c55e); }
+  .node.causa { border-left: 4px solid var(--accent2); }
+  .node.efecto { border-left: 4px solid var(--accent4); }
+  .node.medio { border-left: 4px solid var(--accent3); }
+  .node.fin { border-left: 4px solid var(--accent); }
+  .connector { width: 2px; height: 22px; background: linear-gradient(#475569, #64748b); }
+
+  /* ---------- MATRIZ 4x4 ---------- */
+  table.matrix { width: 100%; border-collapse: collapse; margin-top: 10px; }
+  table.matrix th, table.matrix td {
+    border: 1px solid #334155; padding: 10px 12px; text-align: left; vertical-align: top;
+  }
+  table.matrix thead th { background: #0369a1; color: #fff; text-align: center; font-size: .9rem; }
+  table.matrix tbody th { background: var(--bg2); color: var(--accent); white-space: nowrap; font-size: .92rem; }
+  table.matrix td { background: rgba(30,41,59,.6); font-size: .86rem; color: var(--muted); line-height: 1.45; }
+
+  /* ---------- TABLA COMPARATIVA ---------- */
+  table.compare { width: 100%; border-collapse: collapse; margin-top: 12px; }
+  table.compare th, table.compare td { border: 1px solid #334155; padding: 13px 16px; text-align: left; font-size: 1rem; }
+  table.compare thead th { text-align: center; font-size: 1.05rem; }
+  table.compare thead th:first-child { background: #065f46; color: #fff; }
+  table.compare thead th:last-child { background: #7f1d1d; color: #fff; }
+  table.compare td:first-child { background: rgba(6,95,70,.18); color: #d1fae5; }
+  table.compare td:last-child { background: rgba(127,29,29,.18); color: #fecaca; }
+
+  /* ---------- FLUJO / PASOS ---------- */
+  .flow { display: flex; align-items: stretch; gap: 0; margin-top: 12px; flex-wrap: wrap; }
+  .flow .step {
+    flex: 1; min-width: 150px; background: var(--card); border: 1px solid #334155;
+    border-radius: 12px; padding: 16px; position: relative; font-size: .95rem;
+  }
+  .flow .step:not(:last-child) { margin-right: 32px; }
+  .flow .step:not(:last-child)::after {
+    content: "➜"; position: absolute; right: -28px; top: 50%; transform: translateY(-50%);
+    color: var(--accent); font-size: 1.3rem;
+  }
+  .flow .step .lbl { font-size: .75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); display: block; margin-bottom: 5px; }
+
+  .callout {
+    background: rgba(56,189,248,.08); border: 1px solid rgba(56,189,248,.35);
+    border-radius: 12px; padding: 16px 20px; margin-top: 20px; font-size: 1.02rem;
+  }
+  .callout.orange { background: rgba(251,146,60,.08); border-color: rgba(251,146,60,.35); }
+  .callout.green { background: rgba(74,222,128,.08); border-color: rgba(74,222,128,.35); }
+  .callout.violet { background: rgba(167,139,250,.1); border-color: rgba(167,139,250,.4); }
+
+  .vs-box {
+    display: grid; grid-template-columns: 1fr auto 1fr; gap: 16px; align-items: center; margin-top: 14px;
+  }
+  .vs-badge {
+    width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, var(--accent2), var(--accent4)); font-weight: 800; color: #0f172a; font-size: 1.1rem;
+  }
+
+  .kpi {
+    text-align: center; padding: 18px 14px;
+  }
+  .kpi .big { font-size: 1.9rem; font-weight: 800; color: var(--accent); display: block; }
+  .kpi .small { font-size: .88rem; color: var(--muted); }
+
+  /* ---------- NAVEGACIÓN ---------- */
+  .nav {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    display: flex; align-items: center; gap: 16px; z-index: 100;
+    background: rgba(15,23,42,.85); backdrop-filter: blur(8px);
+    padding: 9px 20px; border-radius: 999px; border: 1px solid #334155;
+  }
+  .nav button {
+    background: var(--bg2); color: var(--text); border: 1px solid #475569;
+    border-radius: 50%; width: 42px; height: 42px; font-size: 1.1rem; cursor: pointer;
+    transition: background .2s, transform .15s;
+  }
+  .nav button:hover { background: var(--accent); color: #0f172a; transform: scale(1.08); }
+  .nav .counter { font-size: .92rem; color: var(--muted); min-width: 68px; text-align: center; }
+
+  .progress { position: fixed; top: 0; left: 0; height: 4px; width: 100%; background: #1e293b; z-index: 100; }
+  .progress .bar { height: 100%; width: 0; background: linear-gradient(90deg, var(--accent), #818cf8); transition: width .4s ease; }
+
+  .dots { position: fixed; right: 16px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 7px; z-index: 100; }
+  .dots span { width: 8px; height: 8px; border-radius: 50%; background: #334155; cursor: pointer; transition: background .2s, transform .2s; }
+  .dots span:hover { transform: scale(1.4); }
+  .dots span.on { background: var(--accent); }
+  @media (max-width: 900px) { .dots { display: none; } }
+</style>
+</head>
+<body>
+
+<div class="progress"><div class="bar" id="bar"></div></div>
+<div class="dots" id="dots"></div>
+
+<!-- ========== 1. PORTADA ========== -->
+<section class="slide cover">
+  <div class="slide-inner">
+    <span class="tag">Gestión de Proyectos</span>
+    <h1>Metodología de Formulación de Proyectos<br><span class="accent">Marco Lógico</span></h1>
+    <p class="subtitle">De un problema real… a un proyecto estructurado, medible y evaluable</p>
+    <p class="hint">Usa <kbd>←</kbd> <kbd>→</kbd> o los botones para navegar</p>
+  </div>
+</section>
+
+<!-- ========== 2. RUTA DE LA EXPOSICIÓN ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <h2>Ruta de la exposición: 6 partes, 6 preguntas, <span class="accent6">1 solo caso</span></h2>
+    <p>Toda la presentación sigue <strong>un mismo caso transversal</strong>: así cada parte construye sobre la anterior y contamos <strong>una historia completa</strong>.</p>
+    <div class="grid3" style="margin-top:20px">
+      <div class="card" style="border-top:3px solid var(--accent)"><h3 class="accent">1 · ¿Qué es?</h3><p>Qué es el Marco Lógico y para qué existe. <em>Presenta el problema.</em></p></div>
+      <div class="card" style="border-top:3px solid var(--accent2)"><h3 class="accent2">2 · ¿Cómo se construye?</h3><p>Del problema al proyecto: árboles y alternativas.</p></div>
+      <div class="card" style="border-top:3px solid var(--accent3)"><h3 class="accent3">3 · La Matriz</h3><p>La herramienta central: 4 niveles × 4 columnas.</p></div>
+      <div class="card" style="border-top:3px solid var(--accent4)"><h3 class="accent4">4 · Medición</h3><p>Indicadores, seguimiento y evaluación.</p></div>
+      <div class="card" style="border-top:3px solid var(--accent5)"><h3 class="accent5">5 · ¿Por qué elegirla?</h3><p>Comparación con otras metodologías y ventajas.</p></div>
+      <div class="card" style="border-top:3px solid var(--accent6)"><h3 class="accent6">6 · Caso + conclusión</h3><p>El proyecto completo y el cierre argumentado.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 3. DIVISOR PERSONA 1 ========== -->
+<section class="slide divider p1">
+  <div class="slide-inner">
+    <div class="avatar">👩🏻‍💼</div>
+    <span class="pnum">Persona 1</span>
+    <h1>¿Qué es el Marco Lógico?</h1>
+    <p class="obj">Objetivo: introducir el tema… y presentar el problema que nos acompañará toda la exposición.</p>
+    <div class="question">❝ ¿Qué es y para qué existe? ❞</div>
+  </div>
+</section>
+
+<!-- ========== 4. P1 DEFINICIÓN ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <h2>Definición: ¿qué es la metodología de Marco Lógico?</h2>
+    <p>La <strong>Metodología de Marco Lógico (MML)</strong> —del inglés <em>Logical Framework Approach</em>— es una metodología de formulación y gestión de proyectos que permite transformar una <strong class="accent">problemática real</strong> en una <strong class="accent">estructura lógica de intervención</strong>: objetivos, resultados, actividades e indicadores conectados por relaciones de causa–efecto.</p>
+    <div class="grid3" style="margin-top:24px">
+      <div class="card"><div class="icon">🔍</div><h3>Analizar</h3><p>Comprender el problema, sus causas, sus efectos y sus actores.</p></div>
+      <div class="card"><div class="icon">🧩</div><h3>Estructurar</h3><p>Organizar la solución con lógica: medios → fines.</p></div>
+      <div class="card"><div class="icon">📏</div><h3>Verificar</h3><p>Definir cómo se medirá y comprobará cada logro.</p></div>
+    </div>
+    <div class="callout">💡 <strong>Idea central:</strong> no se parte de una “buena idea”, sino de un <strong>problema identificado</strong> que se convierte, paso a paso, en una intervención coherente.</div>
+  </div>
+</section>
+
+<!-- ========== 5. P1 PARA QUÉ SIRVE ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <h2>¿Para qué sirve y en qué proyectos se utiliza?</h2>
+    <div class="grid2">
+      <div class="card">
+        <h3 class="accent">🎯 ¿Para qué sirve?</h3>
+        <ul>
+          <li>Diagnosticar correctamente <strong>antes</strong> de proponer soluciones</li>
+          <li>Dar <strong>coherencia</strong> entre problema, objetivos y actividades</li>
+          <li>Definir <strong>indicadores</strong> para medir resultados</li>
+          <li>Identificar <strong>riesgos externos</strong> (supuestos)</li>
+          <li>Facilitar el <strong>seguimiento y la evaluación</strong></li>
+          <li>Comunicar el proyecto a financiadores y tomadores de decisión</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3 class="accent3">🗂️ ¿En qué proyectos se utiliza?</h3>
+        <ul>
+          <li>Proyectos de <strong>desarrollo social</strong> y cooperación internacional</li>
+          <li><strong>Inversión pública</strong>: salud, educación, infraestructura</li>
+          <li>Programas de ONG y organismos multilaterales</li>
+          <li>Proyectos comunitarios y de desarrollo local</li>
+          <li>Proyectos institucionales de <strong>mejora de servicios</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout orange">📌 Es el estándar exigido por gran parte de los organismos financiadores: Banco Mundial, BID, PNUD, cooperaciones internacionales y sistemas nacionales de inversión pública.</div>
+  </div>
+</section>
+
+<!-- ========== 6. P1 ORIGEN ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <h2>Origen y evolución breve</h2>
+    <div class="flow" style="margin-top:6px">
+      <div class="step"><span class="lbl">1969</span><strong>Nace en USAID</strong><p class="muted" style="font-size:.9rem;margin-top:6px">La consultora Practical Concepts Inc. la desarrolla para la Agencia de EE. UU. para el Desarrollo Internacional.</p></div>
+      <div class="step"><span class="lbl">1970–1980</span><strong>Adopción multilateral</strong><p class="muted" style="font-size:.9rem;margin-top:6px">Banco Mundial, BID, PNUD y cooperaciones europeas la incorporan como estándar de formulación.</p></div>
+      <div class="step"><span class="lbl">1990</span><strong>Enfoque participativo</strong><p class="muted" style="font-size:.9rem;margin-top:6px">Se integra con talleres de análisis con involucrados y planificación por objetivos (ZOPP, de la GTZ).</p></div>
+      <div class="step"><span class="lbl">Hoy</span><strong>Estándar mundial</strong><p class="muted" style="font-size:.9rem;margin-top:6px">Base de sistemas nacionales de inversión pública y de la gestión por resultados en todo el mundo.</p></div>
+    </div>
+    <div class="callout">¿Por qué surge? Porque muchos proyectos fracasaban por <strong>mala formulación</strong>: objetivos ambiguos, diagnósticos débiles y ausencia de mecanismos de medición.</div>
+  </div>
+</section>
+
+<!-- ========== 7. P1 METODOLOGÍA VS MATRIZ ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <h2>Diferencia clave: <span class="accent">metodología</span> ≠ <span class="accent3">matriz</span></h2>
+    <div class="vs-box">
+      <div class="card">
+        <h3 class="accent">🧭 La METODOLOGÍA de Marco Lógico</h3>
+        <p>Es el <strong>proceso completo</strong>: un camino de análisis y planificación que incluye el estudio de involucrados, el árbol de problemas, el árbol de objetivos, el análisis de alternativas y, finalmente, la construcción de la matriz.</p>
+        <p style="margin-top:8px"><em>Es el “cómo se piensa” el proyecto.</em></p>
+      </div>
+      <div class="vs-badge">VS</div>
+      <div class="card">
+        <h3 class="accent3">📋 La MATRIZ de Marco Lógico</h3>
+        <p>Es el <strong>producto final</strong> de ese proceso: una tabla de 4×4 que resume en una página el proyecto (fin, propósito, componentes, actividades, indicadores, medios de verificación y supuestos).</p>
+        <p style="margin-top:8px"><em>Es el “documento” que lo sintetiza.</em></p>
+      </div>
+    </div>
+    <div class="callout">⚠️ Error frecuente: creer que “llenar la matriz” es aplicar la metodología. <strong>La matriz sin el análisis previo es solo un formulario.</strong></div>
+  </div>
+</section>
+
+<!-- ========== 8. P1 CASO: EL PROBLEMA ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <span class="case-tag">🧓 Nuestro caso transversal — el problema</span>
+    <h2>Adultos mayores que viven solos sufren caídas… <span class="accent4">sin recibir ayuda</span></h2>
+    <div class="grid2">
+      <div>
+        <p>En nuestra comunidad, muchos <strong>adultos mayores viven solos</strong>. Cuando sufren una caída en su hogar, pueden pasar <strong class="accent4">horas sin que nadie lo sepa</strong>.</p>
+        <ul style="margin-top:14px">
+          <li>🩹 Lesiones que se <strong>complican por la demora</strong> en la atención</li>
+          <li>💔 Fallecimientos que <strong>podrían haberse evitado</strong></li>
+          <li>😟 Miedo, ansiedad y pérdida de autonomía</li>
+        </ul>
+      </div>
+      <div class="card" style="display:flex;flex-direction:column;justify-content:center;gap:8px">
+        <div class="kpi"><span class="big">1 de cada 3</span><span class="small">adultos mayores de 65+ sufre una caída al año</span></div>
+        <div class="kpi"><span class="big" style="color:var(--accent4)">Horas</span><span class="small">puede tardar la ayuda cuando viven solos</span></div>
+        <div class="kpi"><span class="big" style="color:var(--accent3)">Evitable</span><span class="small">gran parte del daño, con atención oportuna</span></div>
+      </div>
+    </div>
+    <div class="callout violet">🧵 Este problema nos acompañará <strong>toda la exposición</strong>: lo analizaremos, lo convertiremos en proyecto, lo mediremos y lo evaluaremos con Marco Lógico.</div>
+  </div>
+</section>
+
+<!-- ========== 9. DIVISOR PERSONA 2 ========== -->
+<section class="slide divider p2">
+  <div class="slide-inner">
+    <div class="avatar">👩🏻‍💼</div>
+    <span class="pnum">Persona 2</span>
+    <h1>¿Cómo se construye?</h1>
+    <p class="obj">Objetivo: explicar el proceso metodológico paso a paso.</p>
+    <div class="question">❝ ¿Cómo se pasa de un problema a un proyecto estructurado? ❞</div>
+  </div>
+</section>
+
+<!-- ========== 10. P2 LAS 5 ETAPAS ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <h2>El proceso metodológico: 5 etapas</h2>
+    <div class="flow">
+      <div class="step"><div class="num-badge">1</div><h3 style="font-size:1rem">Análisis de involucrados</h3><p class="muted" style="font-size:.88rem">¿Quiénes afectan o se ven afectados?</p></div>
+      <div class="step"><div class="num-badge">2</div><h3 style="font-size:1rem">Árbol de problemas</h3><p class="muted" style="font-size:.88rem">Causas y efectos de la situación actual</p></div>
+      <div class="step"><div class="num-badge">3</div><h3 style="font-size:1rem">Árbol de objetivos</h3><p class="muted" style="font-size:.88rem">La situación deseada: medios y fines</p></div>
+      <div class="step"><div class="num-badge">4</div><h3 style="font-size:1rem">Análisis de alternativas</h3><p class="muted" style="font-size:.88rem">Elegir la mejor estrategia</p></div>
+      <div class="step"><div class="num-badge">5</div><h3 style="font-size:1rem">Matriz de Marco Lógico</h3><p class="muted" style="font-size:.88rem">El proyecto resumido y verificable</p></div>
+    </div>
+    <div class="callout" style="margin-top:30px;font-size:1.1rem;text-align:center">
+      <strong>Problema → causas y efectos → objetivos → alternativas → proyecto</strong><br>
+      <span class="muted" style="font-size:.95rem">Esa es la cadena completa que veremos ahora, aplicada a nuestro caso.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 11. P2 INVOLUCRADOS ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <span class="case-tag">🧓 Caso — etapa 1</span>
+    <h2>Análisis de involucrados: ¿quiénes intervienen?</h2>
+    <p>Identificamos a todos los actores que <strong>afectan o se ven afectados</strong> por el problema, con sus intereses y capacidades.</p>
+    <div class="grid4" style="margin-top:18px">
+      <div class="card"><div class="icon">🧓</div><h3>Beneficiarios</h3><p>Adultos mayores que viven solos (directos) y sus familias (indirectos).</p></div>
+      <div class="card"><div class="icon">🏛️</div><h3>Ejecutores</h3><p>Municipalidad y centro de salud local, que lideran el proyecto.</p></div>
+      <div class="card"><div class="icon">🤝</div><h3>Aliados</h3><p>Vecinos voluntarios, juntas vecinales, ONG de adultos mayores, bomberos.</p></div>
+      <div class="card"><div class="icon">⚡</div><h3>Posibles detractores</h3><p>Quienes vean el gasto como innecesario o desconfíen de la tecnología.</p></div>
+    </div>
+    <div class="callout">Para cada actor analizamos: <strong>intereses, problemas percibidos, recursos y mandatos</strong>. Así anticipamos alianzas… y resistencias.</div>
+  </div>
+</section>
+
+<!-- ========== 12. P2 ÁRBOL DE PROBLEMAS ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <span class="case-tag">🧓 Caso — etapa 2</span>
+    <h2>Árbol de problemas: la situación actual</h2>
+    <div class="tree">
+      <span class="tree-label">Efectos</span>
+      <div class="tree-level">
+        <div class="node efecto">Lesiones graves y complicaciones por demora en la atención</div>
+        <div class="node efecto">Fallecimientos evitables</div>
+        <div class="node efecto">Miedo y pérdida de autonomía</div>
+        <div class="node efecto">Sobrecostos para el sistema de salud</div>
+      </div>
+      <div class="connector"></div>
+      <div class="node central">PROBLEMA CENTRAL:<br>Los adultos mayores que viven solos sufren caídas sin recibir ayuda oportuna</div>
+      <div class="connector"></div>
+      <div class="tree-level">
+        <div class="node causa">Viven en soledad y aislamiento</div>
+        <div class="node causa">No existen medios de alerta rápida en el hogar</div>
+        <div class="node causa">No hay redes vecinales de apoyo organizadas</div>
+        <div class="node causa">Fragilidad física y riesgos en el hogar</div>
+      </div>
+      <span class="tree-label">Causas</span>
+    </div>
+    <p class="muted" style="margin-top:12px;font-size:.95rem">📌 Los problemas se redactan como <strong>estados negativos</strong> (no como “falta de…” una solución) y se validan con los involucrados.</p>
+  </div>
+</section>
+
+<!-- ========== 13. P2 ÁRBOL DE OBJETIVOS ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <span class="case-tag">🧓 Caso — etapa 3</span>
+    <h2>Árbol de objetivos: la situación deseada</h2>
+    <p style="font-size:1rem">Cada estado negativo se convierte en positivo: <strong>causas → medios</strong>, <strong>efectos → fines</strong>.</p>
+    <div class="tree">
+      <span class="tree-label">Fines</span>
+      <div class="tree-level">
+        <div class="node fin">Menos complicaciones por demora en la atención</div>
+        <div class="node fin">Reducción de fallecimientos evitables</div>
+        <div class="node fin">Mayor seguridad y autonomía</div>
+        <div class="node fin">Menor costo para el sistema de salud</div>
+      </div>
+      <div class="connector"></div>
+      <div class="node central green">OBJETIVO CENTRAL:<br>Los adultos mayores que viven solos reciben ayuda oportuna ante una caída</div>
+      <div class="connector"></div>
+      <div class="tree-level">
+        <div class="node medio">Redes vecinales de apoyo organizadas</div>
+        <div class="node medio">Dispositivos de alerta instalados en los hogares</div>
+        <div class="node medio">Acompañamiento y monitoreo periódico</div>
+        <div class="node medio">Hogares adaptados y riesgos prevenidos</div>
+      </div>
+      <span class="tree-label">Medios</span>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 14. P2 ALTERNATIVAS ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <span class="case-tag">🧓 Caso — etapa 4</span>
+    <h2>Análisis de alternativas: ¿qué estrategia elegimos?</h2>
+    <div class="grid3">
+      <div class="card">
+        <h3 class="accent">A · Prevención solamente</h3>
+        <p>Campaña de adaptación de hogares y prevención de caídas.</p>
+        <p style="margin-top:8px">💰 Costo bajo · ✅ viable<br>❌ <strong>No responde</strong> cuando la caída ya ocurrió.</p>
+      </div>
+      <div class="card" style="border:2px solid var(--accent3);box-shadow:0 0 24px rgba(74,222,128,.15)">
+        <h3 class="accent3">B · Alerta + red vecinal ⭐</h3>
+        <p>Dispositivos de alerta en el hogar + red de vecinos respondentes capacitados.</p>
+        <p style="margin-top:8px">💰 Costo medio · ✅ viable · ✅ <strong>atiende la causa directa</strong> · ✅ sostenible.</p>
+      </div>
+      <div class="card">
+        <h3 class="accent4">C · Cuidado domiciliario</h3>
+        <p>Cuidadores permanentes para cada adulto mayor.</p>
+        <p style="margin-top:8px">✅ Muy efectivo<br>❌ <strong>Costo inviable</strong> para la municipalidad.</p>
+      </div>
+    </div>
+    <div class="callout green">⭐ <strong>Estrategia elegida: B.</strong> Criterios: viabilidad técnica y financiera, costo–efectividad, impacto, sostenibilidad y aceptación social. → Esto define el alcance del proyecto… y alimenta la matriz.</div>
+  </div>
+</section>
+
+<!-- ========== 15. DIVISOR PERSONA 3 ========== -->
+<section class="slide divider p3">
+  <div class="slide-inner">
+    <div class="avatar">👩🏻‍💼</div>
+    <span class="pnum">Persona 3</span>
+    <h1>La Matriz de Marco Lógico</h1>
+    <p class="obj">Objetivo: explicar la herramienta central de la metodología.</p>
+    <div class="question">❝ ¿Cómo se organiza y controla lógicamente un proyecto? ❞</div>
+  </div>
+</section>
+
+<!-- ========== 16. P3 CUATRO NIVELES ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <h2>Los 4 niveles de la matriz (las filas)</h2>
+    <div class="flow" style="flex-direction:column;gap:10px">
+      <div class="step" style="margin-right:0;border-left:5px solid var(--accent)"><span class="lbl">Nivel 1 — 🌟 Fin</span><strong>La gran situación de desarrollo a la que el proyecto contribuye.</strong> <span class="muted">No lo logra solo: contribuye. → “Reducir la mortalidad por caídas en adultos mayores del distrito.”</span></div>
+      <div class="step" style="margin-right:0;border-left:5px solid var(--accent3)"><span class="lbl">Nivel 2 — 🎯 Propósito</span><strong>El cambio que el proyecto sí debe lograr en el grupo objetivo.</strong> <span class="muted">→ “Los adultos mayores que viven solos reciben ayuda oportuna ante una caída.”</span></div>
+      <div class="step" style="margin-right:0;border-left:5px solid var(--accent2)"><span class="lbl">Nivel 3 — 📦 Componentes / Resultados</span><strong>Los productos o servicios que el proyecto entrega.</strong> <span class="muted">→ “Dispositivos de alerta instalados” + “red vecinal capacitada y activa”.</span></div>
+      <div class="step" style="margin-right:0;border-left:5px solid var(--accent4)"><span class="lbl">Nivel 4 — 🛠️ Actividades</span><strong>Las acciones concretas que producen los componentes.</strong> <span class="muted">→ Censo de adultos mayores, compra e instalación, capacitación de vecinos, simulacros.</span></div>
+    </div>
+    <div class="callout">⬆️ <strong>Lógica vertical:</strong> si hacemos las actividades → se producen los componentes → se alcanza el propósito → se contribuye al fin.</div>
+  </div>
+</section>
+
+<!-- ========== 17. P3 CUATRO COLUMNAS ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <h2>Las 4 columnas de la matriz</h2>
+    <div class="grid4">
+      <div class="card"><div class="icon">📝</div><h3>Resumen narrativo</h3><p>Describe <strong>qué</strong> se quiere lograr en cada nivel: fin, propósito, componentes y actividades.</p></div>
+      <div class="card"><div class="icon">📊</div><h3>Indicadores</h3><p>Expresan <strong>cómo se mide</strong> cada nivel, en cantidad, calidad y tiempo.</p></div>
+      <div class="card"><div class="icon">🧾</div><h3>Medios de verificación</h3><p>Indican <strong>dónde se comprueba</strong>: encuestas, registros, estadísticas, informes.</p></div>
+      <div class="card"><div class="icon">🌦️</div><h3>Supuestos</h3><p>Condiciones <strong>externas</strong>, fuera del control del proyecto, necesarias para que la lógica se cumpla.</p></div>
+    </div>
+    <div class="callout orange">➡️ <strong>Lógica horizontal:</strong> cada objetivo va acompañado de su medición (indicador) y de su comprobación (medio de verificación). Nada queda sin forma de verificarse.</div>
+    <div class="callout">💀 Ojo con el <strong>“supuesto asesino”</strong>: si una condición externa crítica probablemente no se cumplirá, el proyecto debe rediseñarse.</div>
+  </div>
+</section>
+
+<!-- ========== 18. P3 MATRIZ DEL CASO ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <span class="case-tag">🧓 Caso — etapa 5: la matriz construida</span>
+    <h2>La Matriz de Marco Lógico de nuestro proyecto</h2>
+    <table class="matrix">
+      <thead>
+        <tr><th style="width:13%"></th><th>Resumen narrativo</th><th>Indicadores</th><th>Medios de verificación</th><th>Supuestos</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>🌟 Fin</th>
+          <td>Reducir la mortalidad y discapacidad por caídas en adultos mayores que viven solos</td>
+          <td>−20% fallecimientos por caídas en 3 años</td>
+          <td>Estadísticas del Ministerio de Salud</td>
+          <td>Continuidad de las políticas de envejecimiento saludable</td>
+        </tr>
+        <tr>
+          <th>🎯 Propósito</th>
+          <td>Los adultos mayores que viven solos reciben ayuda oportuna ante una caída</td>
+          <td>90% de las caídas con alerta atendidas en ≤ 15 minutos</td>
+          <td>Registros del sistema de alerta; encuesta a usuarios</td>
+          <td>Los adultos mayores usan el dispositivo; la red vecinal se mantiene activa</td>
+        </tr>
+        <tr>
+          <th>📦 Componentes</th>
+          <td>1. 200 hogares con dispositivo de alerta operativo<br>2. Red de 60 vecinos respondentes capacitada</td>
+          <td>1. N.º de hogares con dispositivo funcionando<br>2. N.º de vecinos capacitados y activos</td>
+          <td>Actas de instalación; registros de capacitación</td>
+          <td>El municipio y el centro de salud brindan soporte técnico</td>
+        </tr>
+        <tr>
+          <th>🛠️ Actividades</th>
+          <td>Censo de adultos mayores; compra e instalación de dispositivos; capacitación de la red; simulacros</td>
+          <td>Presupuesto: USD 120 000 · Plazo: 18 meses</td>
+          <td>Informes financieros y de avance</td>
+          <td>Disponibilidad de equipos; permisos oportunos</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ========== 19. DIVISOR PERSONA 4 ========== -->
+<section class="slide divider p4">
+  <div class="slide-inner">
+    <div class="avatar">👩🏻‍💼</div>
+    <span class="pnum">Persona 4</span>
+    <h1>Indicadores, seguimiento y evaluación</h1>
+    <p class="obj">Objetivo: demostrar que el Marco Lógico no termina cuando se diseña el proyecto.</p>
+    <div class="question">❝ ¿Cómo sabemos si el proyecto realmente funcionó? ❞</div>
+  </div>
+</section>
+
+<!-- ========== 20. P4 INDICADORES ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <span class="case-tag">🧓 Caso — cómo lo medimos</span>
+    <h2>Indicadores, línea base y metas</h2>
+    <div class="grid2">
+      <div class="card" style="border-left:4px solid var(--accent2)">
+        <h3 class="accent2">⚙️ Indicadores de gestión (proceso)</h3>
+        <p>Miden si <strong>hacemos lo planificado</strong>:</p>
+        <ul style="margin-top:6px">
+          <li>% de hogares con dispositivo instalado vs. planificado</li>
+          <li>N.º de vecinos capacitados</li>
+          <li>% de ejecución presupuestal</li>
+        </ul>
+      </div>
+      <div class="card" style="border-left:4px solid var(--accent3)">
+        <h3 class="accent3">🎯 Indicadores de resultado (cambio)</h3>
+        <p>Miden si <strong>la vida de la gente cambió</strong>:</p>
+        <ul style="margin-top:6px">
+          <li>Tiempo promedio de respuesta ante una caída</li>
+          <li>% de caídas atendidas oportunamente</li>
+          <li>Complicaciones evitadas por atención temprana</li>
+        </ul>
+      </div>
+    </div>
+    <div class="grid3" style="margin-top:16px">
+      <div class="card kpi"><span class="small">📍 LÍNEA BASE (hoy)</span><span class="big" style="color:var(--accent4)">~4 horas</span><span class="small">tiempo promedio hasta recibir ayuda</span></div>
+      <div class="card kpi"><span class="small">📊 INDICADOR</span><span class="big">Tiempo promedio de respuesta</span><span class="small">objetivo: reducir el tiempo de atención</span></div>
+      <div class="card kpi"><span class="small">🏁 META</span><span class="big" style="color:var(--accent3)">≤ 60 segundos</span><span class="small">confirmación de alerta · ≤ 15 min de respuesta presencial</span></div>
+    </div>
+    <div class="callout">📌 Todo indicador necesita: <strong>línea base</strong> (punto de partida), <strong>meta</strong> (a dónde llegamos) y <strong>medio de verificación</strong> (cómo lo comprobamos).</div>
+  </div>
+</section>
+
+<!-- ========== 21. P4 SEGUIMIENTO Y EVALUACIÓN ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <h2>Seguimiento y evaluación: el ciclo no se detiene</h2>
+    <div class="grid2">
+      <div class="card">
+        <h3 class="accent">🔄 Seguimiento (durante la ejecución)</h3>
+        <ul>
+          <li>Monitoreo <strong>continuo</strong> de indicadores de gestión y resultado</li>
+          <li>Tablero de control: avance físico y financiero vs. plan</li>
+          <li>Alertas tempranas: si un supuesto se debilita, se actúa</li>
+          <li>Permite <strong>corregir el rumbo</strong> a tiempo</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3 class="accent3">✅ Evaluación (al cierre y después)</h3>
+        <ul>
+          <li>Compara <strong>línea base vs. resultados</strong> alcanzados</li>
+          <li><strong>Eficacia:</strong> ¿se logró el propósito? (¿90% atendidas en ≤15 min?)</li>
+          <li><strong>Eficiencia:</strong> ¿a qué costo se logró?</li>
+          <li><strong>Impacto:</strong> ¿contribuyó al fin? (¿menos fallecimientos?)</li>
+          <li><strong>Sostenibilidad:</strong> ¿la red seguirá activa sin el proyecto?</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout green">🏁 <strong>¿Cómo sabemos si funcionó?</strong> Porque cada promesa del proyecto tiene indicador, meta y medio de verificación. El éxito no se declara: <strong>se demuestra con datos</strong>.</div>
+  </div>
+</section>
+
+<!-- ========== 22. DIVISOR PERSONA 5 ========== -->
+<section class="slide divider p5">
+  <div class="slide-inner">
+    <div class="avatar">👩🏻‍💼</div>
+    <span class="pnum">Persona 5</span>
+    <h1>¿Por qué es una de las mejores metodologías?</h1>
+    <p class="obj">Objetivo: argumentar por qué elegir Marco Lógico frente a otras alternativas.</p>
+    <div class="question">❝ ¿Por qué elegir Marco Lógico frente a otras alternativas? ❞</div>
+  </div>
+</section>
+
+<!-- ========== 23. P5 COMPARATIVA ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <h2>Marco Lógico frente a otras metodologías</h2>
+    <table class="compare">
+      <thead>
+        <tr><th>✅ Marco Lógico</th><th>⚠️ Otras metodologías / enfoques</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Parte de un <strong>problema</strong> analizado con sus actores</td><td>Algunas parten directamente de una <strong>solución</strong> (“buena idea”)</td></tr>
+        <tr><td>Conecta <strong>causas y efectos</strong> en toda la intervención</td><td>Puede existir <strong>menor trazabilidad</strong> entre problema y acciones</td></tr>
+        <tr><td><strong>Define indicadores</strong> para cada nivel de objetivo</td><td>No todas estructuran la <strong>medición</strong> de la misma manera</td></tr>
+        <tr><td>Considera <strong>supuestos y riesgos externos</strong> desde el diseño</td><td>Puede requerir <strong>herramientas adicionales</strong> para gestionar riesgos</td></tr>
+        <tr><td><strong>Facilita la evaluación</strong>: está integrada al diseño</td><td>La evaluación puede quedar <strong>separada</strong> del proyecto</td></tr>
+        <tr><td>Permite <strong>visualizar todo el proyecto</strong> en una sola página</td><td>Algunas herramientas son más <strong>operativas</strong> que estratégicas</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ========== 24. P5 VENTAJAS ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <h2>Seis razones para defenderla</h2>
+    <div class="grid6">
+      <div class="card" style="border-top:3px solid var(--accent)"><div class="icon">🔎</div><h3>Claridad</h3><p>Todo el proyecto se entiende en una sola matriz: qué se hará, por qué y para quién.</p></div>
+      <div class="card" style="border-top:3px solid var(--accent2)"><div class="icon">🧩</div><h3>Coherencia</h3><p>Cada actividad responde a un resultado, cada resultado al propósito, cada propósito al problema.</p></div>
+      <div class="card" style="border-top:3px solid var(--accent3)"><div class="icon">🔗</div><h3>Trazabilidad</h3><p>Se puede seguir la cadena completa: problema → objetivos → acciones → impacto.</p></div>
+      <div class="card" style="border-top:3px solid var(--accent4)"><div class="icon">📏</div><h3>Medición</h3><p>Indicadores y medios de verificación convierten promesas en compromisos medibles.</p></div>
+      <div class="card" style="border-top:3px solid var(--accent5)"><div class="icon">🪟</div><h3>Transparencia</h3><p>Los supuestos explicitan los riesgos: nada se esconde, todo se puede auditar.</p></div>
+      <div class="card" style="border-top:3px solid var(--accent6)"><div class="icon">🧭</div><h3>Toma de decisiones</h3><p>Financiadores y directivos deciden con información ordenada y comparable.</p></div>
+    </div>
+    <div class="callout">💬 No decimos que sea la única metodología válida: decimos que <strong>integra análisis, planificación, medición y evaluación en un solo marco</strong>. Eso la hace excepcionalmente completa.</div>
+  </div>
+</section>
+
+<!-- ========== 25. DIVISOR PERSONA 6 ========== -->
+<section class="slide divider p6">
+  <div class="slide-inner">
+    <div class="avatar">👩🏻‍💼</div>
+    <span class="pnum">Persona 6</span>
+    <h1>Caso práctico completo + conclusión</h1>
+    <p class="obj">Objetivo: presentar el proyecto terminado y cerrar con fuerza.</p>
+    <div class="question">❝ ¿Qué logramos al aplicar Marco Lógico de principio a fin? ❞</div>
+  </div>
+</section>
+
+<!-- ========== 26. P6 CADENA COMPLETA ========== -->
+<section class="slide">
+  <div class="slide-inner">
+    <span class="case-tag">🧓 El caso, de principio a fin</span>
+    <h2>La cadena completa del proyecto</h2>
+    <div class="flow" style="margin-top:18px">
+      <div class="step" style="border-top:3px solid #ef4444"><span class="lbl">😟 Problema</span>Adultos mayores que viven solos sufren caídas sin recibir ayuda</div>
+      <div class="step" style="border-top:3px solid var(--accent3)"><span class="lbl">🎯 Objetivo</span>Reciben ayuda oportuna ante una caída</div>
+      <div class="step" style="border-top:3px solid var(--accent2)"><span class="lbl">📦 Resultados</span>Dispositivos de alerta instalados + red vecinal activa</div>
+      <div class="step" style="border-top:3px solid var(--accent4)"><span class="lbl">🛠️ Actividades</span>Censo, instalación, capacitación, simulacros</div>
+      <div class="step" style="border-top:3px solid var(--accent)"><span class="lbl">📊 Indicador</span>90% de caídas atendidas en ≤ 15 minutos</div>
+      <div class="step" style="border-top:3px solid var(--accent6)"><span class="lbl">🌟 Impacto</span>Menos muertes y complicaciones; mayor autonomía</div>
+    </div>
+    <div class="callout violet" style="margin-top:34px;font-size:1.05rem">
+      Cada eslabón está <strong>conectado y justificado</strong>: nada es decorativo. Si quitamos un eslabón, la cadena se rompe — y la matriz lo hace visible.
+    </div>
+  </div>
+</section>
+
+<!-- ========== 27. P6 CIERRE ========== -->
+<section class="slide cover">
+  <div class="slide-inner">
+    <span class="tag">Conclusión</span>
+    <h2 style="border:none;padding-left:0;margin-bottom:6px">🏆 ¿Por qué Marco Lógico?</h2>
+    <div class="vs-box" style="text-align:left;margin-top:20px">
+      <div class="card" style="border-left:4px solid var(--accent4)">
+        <h3 class="accent4">Antes</h3>
+        <p style="font-size:1.25rem;font-style:italic;color:var(--text)">“Tenemos una buena idea.”</p>
+      </div>
+      <div class="vs-badge">→</div>
+      <div class="card" style="border-left:4px solid var(--accent3)">
+        <h3 class="accent3">Después</h3>
+        <p style="font-size:1.05rem;color:var(--text)">“Tenemos un <strong>problema identificado</strong>, una <strong>solución justificada</strong>, <strong>resultados definidos</strong>, <strong>actividades concretas</strong>, <strong>indicadores medibles</strong> y <strong>condiciones que debemos controlar</strong>.”</p>
+      </div>
+    </div>
+    <div class="callout violet" style="margin-top:34px;font-size:1.2rem;font-style:italic;text-align:center">
+      “El valor del Marco Lógico no está solamente en organizar un proyecto, sino en <strong>demostrar que existe una lógica</strong> entre el problema que queremos resolver, las acciones que vamos a ejecutar y los resultados que esperamos obtener.”
+    </div>
+    <p class="hint">¿Preguntas? — <kbd>←</kbd> para repasar cualquier sección</p>
+  </div>
+</section>
+
+<!-- NAVEGACIÓN -->
+<div class="nav">
+  <button id="prev" title="Anterior">←</button>
+  <span class="counter" id="counter"></span>
+  <button id="next" title="Siguiente">→</button>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const counter = document.getElementById('counter');
+  const bar = document.getElementById('bar');
+  const dotsBox = document.getElementById('dots');
+  let i = 0;
+
+  slides.forEach((_, n) => {
+    const d = document.createElement('span');
+    d.addEventListener('click', () => go(n));
+    dotsBox.appendChild(d);
+  });
+  const dots = dotsBox.querySelectorAll('span');
+
+  function go(n) {
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach((s, k) => s.classList.toggle('active', k === i));
+    dots.forEach((d, k) => d.classList.toggle('on', k === i));
+    counter.textContent = (i + 1) + ' / ' + slides.length;
+    bar.style.width = ((i + 1) / slides.length * 100) + '%';
+  }
+
+  document.getElementById('next').addEventListener('click', () => go(i + 1));
+  document.getElementById('prev').addEventListener('click', () => go(i - 1));
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') go(i + 1);
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') go(i - 1);
+    if (e.key === 'Home') go(0);
+    if (e.key === 'End') go(slides.length - 1);
+  });
+  document.addEventListener('click', e => {
+    if (e.target.closest('.nav') || e.target.closest('.dots')) return;
+    go(e.clientX > window.innerWidth / 2 ? i + 1 : i - 1);
+  });
+
+  go(0);
+</script>
+</body>
+</html>
