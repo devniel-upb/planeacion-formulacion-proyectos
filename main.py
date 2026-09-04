@@ -35,6 +35,7 @@ app = FastAPI(
 )
 
 PRESENTATIONS_DIR = Path(__file__).parent / "presentations"
+MEDIA_DIR = Path(__file__).parent / "media"
 
 # Metadatos opcionales por presentación.
 # La clave es el "slug": el nombre del archivo sin la extensión .html
@@ -44,6 +45,35 @@ PRESENTATION_META = {
         "descripcion": (
             "Presentación interactiva: qué es, cómo se construye, la matriz 4×4, "
             "indicadores y evaluación, ventajas frente a otras metodologías y caso práctico."
+        ),
+    },
+    "aliado-senior": {
+        "titulo": "Aliado Senior 360° — Landing del Proyecto",
+        "descripcion": (
+            "Página principal del proyecto: el problema (árbol de problemas), los objetivos "
+            "(árbol de objetivos), los servicios y el cómo (flujo, dispositivo HABLA, "
+            "alcances y entregables)."
+        ),
+    },
+    "aliado-senior-admin": {
+        "titulo": "Aliado Senior 360° — Administración del Proyecto",
+        "descripcion": (
+            "Gestión del proyecto: riesgos y supuestos, cronograma, presupuesto, "
+            "indicadores de referencia y beneficios esperados."
+        ),
+    },
+    "aliado-senior-v1": {
+        "titulo": "Aliado Senior 360° — Versión anterior (v1)",
+        "descripcion": (
+            "Versión anterior de la landing: problema, solución, productos, objetivos, "
+            "cronograma, presupuesto, riesgos e indicadores en una sola página."
+        ),
+    },
+    "dashboard-negocio": {
+        "titulo": "Dashboard — Caso de Negocio Aliado Senior 360°",
+        "descripcion": (
+            "Panel ejecutivo con KPIs, gráficas de impacto, presupuesto por componente "
+            "y proyecciones a 24 meses. Ideal para presentar ante la junta directiva."
         ),
     },
 }
@@ -171,6 +201,15 @@ def presentacion(slug: str):
             f"Revisa la lista disponible en la página principal.",
         )
     return FileResponse(file, media_type="text/html")
+
+
+@app.get("/media/{filename}")
+def media(filename: str):
+    """Sirve recursos visuales locales usados por las presentaciones."""
+    file = (MEDIA_DIR / filename).resolve()
+    if MEDIA_DIR.resolve() not in file.parents or not file.is_file():
+        raise HTTPException(status_code=404, detail="Recurso no encontrado")
+    return FileResponse(file)
 
 
 if __name__ == "__main__":

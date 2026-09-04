@@ -4,16 +4,24 @@ Monorepo para las aplicaciones relacionadas con la materia Planeación y formula
 
 ## 📦 ¿Qué contiene?
 
-Una app única de **FastAPI** que expone las presentaciones HTML de los distintos entregables de la materia en rutas separadas, lista para desplegarse en **Vercel**.
+Una app única de **FastAPI** que expone las presentaciones HTML de los distintos entregables de la materia en rutas limpias, lista para desplegarse en **Vercel**.
 
 ## 🗂️ Estructura
 
 ```
 ├── main.py                 # Entrypoint: instancia `app` de FastAPI
 ├── requirements.txt        # Dependencias (fastapi, uvicorn)
+├── scripts/
+│   └── extract_pdf.py      # Extrae el PDF de la entrega a docs/entrega-final.md
+├── docs/
+│   └── entrega-final.md    # Contenido fuente extraído del PDF
 ├── .gitignore
 └── presentations/          # Las presentaciones HTML de los entregables
-    └── marco-logico.html   # → /presentaciones/marco-logico
+    ├── marco-logico.html         # → /presentaciones/marco-logico
+    ├── aliado-senior.html        # → /presentaciones/aliado-senior (landing)
+    ├── aliado-senior-admin.html  # → /presentaciones/aliado-senior-admin
+    ├── aliado-senior-v1.html     # → /presentaciones/aliado-senior-v1 (versión anterior)
+    └── dashboard-negocio.html    # → /presentaciones/dashboard-negocio
 ```
 
 ## 🛣️ Rutas
@@ -33,6 +41,25 @@ Una app única de **FastAPI** que expone las presentaciones HTML de los distinto
 3. Listo: queda disponible automáticamente en `/presentaciones/mi-entregable`,
    sin tocar rutas ni reiniciar la app.
 
+## 🧭 Entregables actuales
+
+- `/presentaciones/aliado-senior`: landing pública del caso Aliado Senior 360°. Incluye **Nosotros** (problema e imagen ampliable del árbol de problemas), **Servicios** (objetivos, componentes y servicios) y **Cómo funciona** (diagrama de flujo, dispositivo HABLA ampliable y explicación del recorrido), más un acceso a Admin.
+- `/presentaciones/aliado-senior-admin`: página de administración del proyecto con matriz de riesgos coloreada, supuestos, cronograma en imagen ampliable, presupuesto, simulador interactivo de flujo de caja, indicadores y beneficios esperados.
+- `/presentaciones/aliado-senior-v1`: versión anterior de la landing (historial).
+- `/presentaciones/dashboard-negocio`: dashboard ejecutivo con KPIs y gráficas del caso de negocio.
+- `/presentaciones/marco-logico`: presentación interactiva sobre la metodología de Marco Lógico.
+
+## 📄 Extraer el contenido del PDF
+
+El contenido de las presentaciones se obtiene del PDF de la entrega final. Para regenerar el markdown fuente (`docs/entrega-final.md`):
+
+```bash
+pip install pypdf
+python scripts/extract_pdf.py
+```
+
+El requisito `pypdf` solo se necesita para el script de extracción (no para la app).
+
 ## 💻 Desarrollo local
 
 ```bash
@@ -43,6 +70,15 @@ python main.py
 ```
 
 La app queda en `http://localhost:8000` (con recarga automática).
+
+Las rutas principales de Aliado Senior no usan la extensión `.html`:
+
+```text
+http://localhost:8000/presentaciones/aliado-senior
+http://localhost:8000/presentaciones/aliado-senior-admin
+```
+
+La simulación de flujo de caja permite modificar la suscripción mensual, las metas de usuarios y el costo anual. Actualiza el saldo acumulado, los ingresos, los costos y el punto de equilibrio para comparar escenarios base, optimista y de presión.
 
 También puedes usar `vercel dev` si tienes la CLI de Vercel instalada.
 
